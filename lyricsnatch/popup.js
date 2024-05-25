@@ -15,6 +15,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
     var bfound = 0;
     var pageBody = request.source;
     var repairs = [
+      ["data-lyricid=\".*?\">", "<div class=\"f41I7", "Google3"],
       ["data-lyricid=\".*?\">", "<div class=\"xpdxpnd", "Google2"],
       ["Sorry about that. -->", "<!-- MxM banner -->", "AZLyrics"],
       ["<div class=\"lyrics\">", "</div>", "Genius"],
