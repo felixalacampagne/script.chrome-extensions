@@ -1,0 +1,21 @@
+
+{
+  "name": "Lyric snatcher",
+  "version": "1.3.4",
+  "manifest_version": 2,
+  "description": "Snatch lyrics onto the clipboard",
+  "author": "Chris",
+  "background" : {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "page_action": {
+    "default_icon": "rednote.png",
+    "default_popup": "popup.html"
+  },
+
+  "permissions": ["tabs", "activeTab", 
+  "https://*/*",
+  "http://*/*", 
+  "clipboardWrite", "declarativeContent"]
+}
