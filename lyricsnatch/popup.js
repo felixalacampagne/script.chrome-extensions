@@ -74,6 +74,7 @@ function cleanText(txt)
   txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"[A-Za-z0-9]{6,6} [A-Za-z0-9]{6,6} [A-Za-z0-9]{6,6}\">.*?… <\/span><\/div><\/div>/s, "");
   //txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"rGtH5c\">.*?… <\/span><\/div><\/div>/s, "");
   txt = txt.replace(/<\/span><br>/g, "\n");       // google
+  txt = txt.replace(/<\/span><br aria-hidden="true">/g, "\n");       // google
   txt = txt.replace(/<\/span><\/div>/g, "\n\n");  // google
 
 
