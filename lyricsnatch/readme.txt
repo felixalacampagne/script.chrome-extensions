@@ -52,23 +52,9 @@ match the criteria in "background.js", and coloured when it does. This is good e
 Now to package it. This appears to be as simple as putting everything in a zip file and making the extension .crx.
 Well, it's not as simple as that (when is it ever??). The .crx file must be created using the "Pack extension" button
 on the chrome extensions page. It will create, or force you to use the one it already created, a .pem file which
-used to create the .crx file, which is not a simple .zip file. When the .crx file is created there is actually
-nothing you can do with it!!! The only way to install .crx file is from the Google Web Store! In other words the
-only way to use your private extension is to load the unpacked version in Developer mode. Developer mode can be
-turned off once the extension is loaded and it appears to continue working OK. I guess as long as it works when loaded
-from a network disk it is no problem.
-
-Phewwey. Each time Chrome starts it attempts to trick you into disabling the nice wonderful new
-extension you have spent so much time and effort crafting - what a piece of shirt! Come back IE
-please! all is forgiven.
-I did find a suggested method which should stop this obnoxious behavour. It requires installation
-of policy templates into gpedit.msc and adding the id of the wonderful new extension to a 
-whitelist of extensions which are allowed.
-The instructions are here: https://www.ghacks.net/2017/07/04/hide-chromes-disable-developer-mode-extensions-warning/
-The policy templates came from here: https://support.google.com/chrome/a/answer/187202?hl=en
-and are in the policy_templates.zip zip file. The one I used is policy_templates\windows\adm\en-GB\chrome.adm
-Another fork up. This policy stuff doesn't work. Still get the obnoxious pop-up telling me to disable
-my extension.
+used to create the .crx file, which is not a simple .zip file [it can be opened using 7zip]. 
+When the .crx file is created there is actually nothing you can do with it in Chrome or Edge, only Opera supports
+loading custom extensions.
 
 Strangely enough the disabling of the extension based on the URL, which seems to work fine "off-site"
 does not behave the same in the real world. Instead of the icon going grey for unsupported sites, which
@@ -79,7 +65,7 @@ the one I installed yesterday in the real world. I have the impression google ar
 usage of extensions by making them completely un-usable. Never mind... it still works for what I want it for,
 although it's not so often I have new lyrics to grab, probalby it wont work next time I need it to!
 Yuck, in fact there is now no way to distinguish between when the extension will work and when it
-wont. Why the hell do they keep on forking things up - this is why I have never wanted to use Chromep with 
+wont. Why the hell do they keep on forking things up - this is why I have never wanted to use Chrome. 
 
 So I gave up with Chrome and switched to Opera which is able to run the same extensions as Chrome. This 
 worked fine for a while, long enough for me to finish doing the FLAC lyrics. But then...
@@ -88,7 +74,7 @@ worked fine for a while, long enough for me to finish doing the FLAC lyrics. But
 Opera on Zombie and it was working OK except it didn't recognise Google. Thinking this is something I
 had already fixed I managed to get the more recent copy from minnie via the VPN. I installed the packed
 version and... it didn' forking work anymore. One error says that manifest version is 3 but the max 
-supported version is 2, another says >all_urls> is not understood and another says script injection 
+supported version is 2, another says <all_urls> is not understood and another says script injection 
 is not allowed. WWWWWW TTTTTTT FFFFFFF!!!!!! Yes zombie Opera is up to date! 
 Based on the pages at "https://dev.opera.com/extensions/manifest/" it seems that a pattern for the URL must
 be used so I've tried changed the version from 3 to 2 and then specifing * for the URLs and also added 
@@ -99,3 +85,22 @@ This is due to the css PageStateMatcher in background.js containing a match for 
 names and apparently it has changed so that there are now three class names. Tried to use a * but it 
 didn't work. There is preciously little in the way of help from Google for this so will have to live
 with the hardcoded values for now.
+
+26-May-2024 Tried to use lyricsnatcher on speedy only to be greeted by an mysterious error. Luckily it
+worked still on chunky which got me to thinking what was wrong with speedy. Turns out speedy had an
+updated version of LS. Looking at the source I realised I hod no idea what had changed or why. I also couldn't
+figure out where the source for the working version was. So after some messing around with git and 
+figuring out how to extract the files from the .crx I created a repo dedicated to chrome extensions with
+the, in theory, main branch containg the work LS code and some branches with the code in the state 
+as used by speedy, ie. not working. Now I can attempt to fix the Google lyrics using the currently working
+code base which has version 1.3.4.
+From what I can gather from the speedy code the manifest_version is something to do with the format
+of the manifest file, not the version of the content in the file, ie. if I make changes to the value in the
+manfest file then the version number should not change. 
+Aaaaggggghhhhhh! Now I see why I attempted to change the manifest_version. When the unpacked code is loaded
+into Opera it gives an Error message saying version 2 will be deprecated in 2024 (is it deperecated or 
+no longer supported since it IS 2024). Seems it is deprecated, ie. the extension still works... the 
+Google snatch finds the lyric but the line breaks are broken...
+
+This might provide some clues for the deprecated manifest....
+https://developer.chrome.com/docs/extensions/develop/migrate/mv2-deprecation-timeline

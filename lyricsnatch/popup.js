@@ -1,5 +1,6 @@
 // 02 Jun 2019 class name of Google expand duplicate text changed
 // 24 Apr 2019 Added new criteria for Google. Dump page to clipboard when no lyric found.
+// 26 May 2024 Transferred third value for Google from broken 1.3.5 code, looks like it should still work
 chrome.runtime.onMessage.addListener(function(request, sender) {
   // manifest.json references popup.html
   // popup.html references popup.js
@@ -15,6 +16,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
     var bfound = 0;
     var pageBody = request.source;
     var repairs = [
+      ["data-lyricid=\".*?\">", "<div class=\"f41I7", "Google3"],
       ["data-lyricid=\".*?\">", "<div class=\"xpdxpnd", "Google2"],
       ["Sorry about that. -->", "<!-- MxM banner -->", "AZLyrics"],
       ["<div class=\"lyrics\">", "</div>", "Genius"],

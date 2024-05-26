@@ -18,6 +18,7 @@ chrome.runtime.onInstalled.addListener(function() {
           new chrome.declarativeContent.PageStateMatcher({pageUrl: { hostContains: 'metrolyrics' }}),
           new chrome.declarativeContent.PageStateMatcher({
             pageUrl: { hostContains: 'google',
+//                       css: ["div[class='wwUB2c kno-fb-ctx PZPZlf']"],
                        queryContains: 'lyrics' }
             })
         ],
