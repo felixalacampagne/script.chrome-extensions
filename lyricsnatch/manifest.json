@@ -1,15 +1,15 @@
 
 {
   "name": "Lyric snatcher v3",
-  "version": "1.3.7.1",
+  "version": "1.3.7.2",
   "manifest_version": 3,
-  "description": "Snatch lyrics onto the clipboard v3",
+  "description": "Snatch lyrics onto the clipboard v3.2",
   "author": "Chris",
   "background" : {
     "service_worker": "background.js"  },
   "action": {
-    "default_icon": "rednote.png",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "rednote.png"
   },
 
   "permissions": [

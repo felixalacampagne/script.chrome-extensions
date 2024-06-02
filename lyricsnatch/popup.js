@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   // The action "getSource" is registered by getPagesSource.js. 
   // getPageSource.js sends the "getSource" action, presumably when the icon is clicked, and it arrives here.
   // NB getPageSource.js also adds URL filters so the icon is only enabled for supported websites.
-  console.log("onmessage_listener:fun: recived request action: " + request.action);
+  console.log("popup:onmessage_listener:fun: received request action: " + request.action);
   if (request.action == "getSource")
   {
     // This is where the source of the page arrives for display in the popup
@@ -151,39 +151,9 @@ function writeToClipboard(clipText)
 
 function onWindowLoad()
 {
+  
   console.log("popup:onWindowLoad: start");
-  // Found post saying the script injection should be done via the manifest. So the stuff below
-  // has moved to the manifest. The extension loads and clicking the icon doesn't give any console
-  // errors - and it doesn't do anything. I guess the processing needs to be triggered somehow. 
-  // It appears to have been started by sending the "getSource" message which happened in
-  // getPageSource presumably when it was injected. I guess it must be done somewhere else now
-  // and the onWindowLoad is the only place which makes any sense but it just gives some shirty error
-  // message and nothing happens....
-  // Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist. popup.html:1
-  // var message = document.querySelector('#message');
-  // let queryOptions = { active: true, lastFocusedWindow: true };
-  // let tab = chrome.tabs.query(queryOptions);
-  // let tabid = tab.tabId;
-  // console.log("popup:onWindowLoad: tabid: " + tabid);
-  // chrome.scripting.executeScript(
-  // {
-  //   target : {tabId : tabid},
-  //   file: "getPagesSource.js"
-  // }).then(() => console.log("popup:onWindowLoad: getPagesSource injected into tab ID: " + tabid));
-
-  //,
-  //function() {
-  //  // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-  //  if (chrome.runtime.lastError) {
-  //    message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
-  //  }
-  //}
-
-  // console.log("popup:onWindowLoad: sending 'getSource' message");
-  // chrome.runtime.sendMessage({
-  //   action: "getSource",
-  //   source: document.documentElement.outerHTML});
-   console.log("popup:onWindowLoad: finish");
+  console.log("popup:onWindowLoad: finish");
 }
 
 window.onload = onWindowLoad;
