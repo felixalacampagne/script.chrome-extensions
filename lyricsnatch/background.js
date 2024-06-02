@@ -22,7 +22,10 @@ chrome.runtime.onInstalled.addListener(function() {
                        queryContains: 'lyrics' }
             })
         ],
-        actions: [new chrome.declarativeContent.ShowPageAction() ]
+        actions: 
+     		[  
+      		new chrome.declarativeContent.ShowAction()
+     		]   
       }
     ]);
   });

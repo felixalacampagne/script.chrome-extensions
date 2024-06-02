@@ -2,20 +2,23 @@
 {
   "name": "Lyric snatcher",
   "version": "1.3.6.1",
-  "manifest_version": 2,
-  "description": "Snatch lyrics onto the clipboard",
+  "manifest_version": 3,
+  "description": "Snatch lyrics onto the clipboard v3",
   "author": "Chris",
   "background" : {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "page_action": {
+    "service_worker": "background.js"  },
+  "action": {
     "default_icon": "rednote.png",
     "default_popup": "popup.html"
   },
 
-  "permissions": ["tabs", "activeTab", 
-  "https://*/*",
-  "http://*/*", 
-  "clipboardWrite", "declarativeContent"]
+  "permissions": [
+  "tabs", 
+  "clipboardWrite", 
+  "declarativeContent"
+  ],
+"host_permissions": [
+  "http://*/" ,
+  "https://*/"
+]
 }
