@@ -1,3 +1,19 @@
+So LyricSnatcher worked well therefore the grassholes decided that they would totally
+change the way extensions worked to esnure the it no longer works. This is called 
+manifest version 3. The documentation for it is completely incomprehensible and I have
+no clue how they describe what it is that I want to do.
+
+I've tried messing around trying to tweak what is already there for V2 but it is not getting me
+anywhere. I think I have found an example of what I want to do so I guess I'll just have to follow
+the example, see if it works, see if it does anything useful and then see if I can adapt it for what
+I want - just like I had to for the original version - talk about reinventing the wheel... and making 
+it square the second time around.
+
+The example extensions are here:
+https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#pin_the_extension
+https://developer.chrome.com/docs/extensions/get-started/tutorial/scripts-activetab
+
+
 To install a local extension in Chrome:
 
 - Enter "chrome://extensions/" into the address bar
