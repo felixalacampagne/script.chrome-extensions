@@ -36,10 +36,10 @@ chrome.runtime.onInstalled.addListener(function() {
 
 // listen for our browerAction to be clicked
 console.log("background: add onclicked listener");
-chrome.action.onClicked.addListener(async (tab) => {
+chrome.action.onClicked.addListener( tab)=> {
   console.log("background:onclicked_listener:fun: start"); // This is never seen
    chrome.tabs.executeScript(tab.id, { files: ['getPagesSource.js'] });
-   chrome.runtime.sendMessage({
+   chrome.action.sendMessage({
     action: "getSource",
     source: document.documentElement.outerHTML
 });
