@@ -5,6 +5,8 @@
 // Therefore switched to using "queryContains: 'lyrics'" which gives
 // a positive for any lyric search whether or not the returned page has
 // the actual lyrics... but better that than being unable to copy lyrics when they are there.
+console.log("background: start");
+console.log("background: add oninstalled listener");
 chrome.runtime.onInstalled.addListener(function() {
   // Replace all rules ...
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -30,3 +32,18 @@ chrome.runtime.onInstalled.addListener(function() {
     ]);
   });
 });
+
+
+// listen for our browerAction to be clicked
+console.log("background: add onclicked listener");
+chrome.action.onClicked.addListener(async (tab) => {
+  console.log("background:onclicked_listener:fun: start"); // This is never seen
+   chrome.tabs.executeScript(tab.id, { files: ['getPagesSource.js'] });
+   chrome.runtime.sendMessage({
+    action: "getSource",
+    source: document.documentElement.outerHTML
+});
+   console.log("background:onclicked_listener:fun: finish");
+});
+
+console.log("background: finish");

@@ -1,4 +1,5 @@
 // I think that this script is somehow 'injected' into the actual displayed page
+console.log("getPageSource: start");
 function DOMtoString(document_root) {
     var html = '',
         node = document_root.firstChild;
@@ -39,6 +40,7 @@ function DOMtoString(document_root) {
 // appears as &hellips; in view source.
 // document.documentElement.textContent promised the raw content but it also returns the actual character.
 // Not sure what is really returned by by the server... Will stick to outerHTMl for now
+console.log("getPageSource: sending message");
 chrome.runtime.sendMessage({
     action: "getSource",
     source: document.documentElement.outerHTML

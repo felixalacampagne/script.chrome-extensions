@@ -22,11 +22,5 @@
   "http://*/" ,
   "https://*/"
 ]
-,
-"content_scripts": [
-  {
-   "matches": ["https://*/*","http://*/*"],
-   "js": ["getPagesSource.js"]
-  }
-]
+
 }
