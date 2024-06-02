@@ -1,7 +1,7 @@
 
 {
-  "name": "Lyric snatcher",
-  "version": "1.3.6.1",
+  "name": "Lyric snatcher v3",
+  "version": "1.3.7.1",
   "manifest_version": 3,
   "description": "Snatch lyrics onto the clipboard v3",
   "author": "Chris",
@@ -13,12 +13,20 @@
   },
 
   "permissions": [
-  "tabs", 
+  "scripting", 
+  "activeTab",
   "clipboardWrite", 
   "declarativeContent"
   ],
 "host_permissions": [
   "http://*/" ,
   "https://*/"
+]
+,
+"content_scripts": [
+  {
+   "matches": ["https://*/*","http://*/*"],
+   "js": ["getPagesSource.js"]
+  }
 ]
 }
