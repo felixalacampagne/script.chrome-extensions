@@ -104,3 +104,13 @@ Google snatch finds the lyric but the line breaks are broken...
 
 This might provide some clues for the deprecated manifest....
 https://developer.chrome.com/docs/extensions/develop/migrate/mv2-deprecation-timeline
+
+I think the above link means that manifest v2 will become unsupported as from the end of June 2024
+so it looks liek I'll have to try to figure out what thr fork they have changed. Certainly reading the
+stuff at the above link is not very helpful since I have got a clue what they are talking about - 
+snatcher is just too simple for anything they say to make any sense.
+
+Might be interesting to try the Extension Manifest Converter: https://github.com/GoogleChromeLabs/extension-manifest-converter
+(maybe not, it's python, which I don't get on well with!!)
+
+
