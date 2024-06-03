@@ -43,9 +43,11 @@ async (request, sender, sendResponse) =>
       {
          var url = sender.tab.url;
          let tabid = +sender.tab.id;
-         if(url.match(/bewx2274\/Java8/i)
-         || url.match(/bitbucket\.swift/i)
-         || url.match(/\.cloudbees-ci\.ent\.swift\./i)
+         if(url.match(/\.azlyrics\./i)
+         || url.match(/genius\./i)
+         || url.match(/\.google\./i)
+         || url.match(/oldielyrics/i)
+         || url.match(/metrolyrics/i)
          )
          {
             

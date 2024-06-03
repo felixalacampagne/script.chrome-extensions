@@ -9,6 +9,7 @@ function handlePageBody(pageBody)
       ["data-lyricid=\".*?\">", "<div class=\"xpdxpnd", "Google2"],
       ["Sorry about that. -->", "<!-- MxM banner -->", "AZLyrics"],
       ["<div class=\"lyrics\">", "</div>", "Genius"],
+      ["<div data-lyrics-container=\"true\" class=\"Lyrics_.*?>","<div class=\"LyricsFooter__", "Genius2"],
       ["<span style=\"display:none\".*?</span>", "<div class=\"xpdxpnd", "Google"],
       ["<div itemprop=\"text\">", "</div>", "oldielyrics"],
       ["<p class=\"verse\">", "<!--WIDGET - RELATED-->", "metrolyrics"]
