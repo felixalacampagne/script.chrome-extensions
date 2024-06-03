@@ -166,6 +166,8 @@ function doProcessPage()
 {
 console.log("popup:doProcessPage: start");
 (async () => {
+   try
+   {
    const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
    const response = await chrome.tabs.sendMessage(tab.id, {action: "getSource"});
    
@@ -189,6 +191,12 @@ console.log("popup:doProcessPage: start");
    {
       setMessage("empty response for sendMessage");
    }
+}
+catch(error)
+{
+   console.log("popup:doProcessPage: error fetching page source");
+   setMessage("no access to page source");
+}
 
 })();
 console.log("popup:doProcessPage: finish");
