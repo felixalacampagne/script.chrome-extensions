@@ -15,4 +15,9 @@ chrome.runtime.onMessage.addListener(function(request,sender, sendResponse)
    }
 );
 
+(async () => {
+   console.log("ls:content:async: send setBadge message");
+   const response = await chrome.runtime.sendMessage({action: "setLyricBadge"});
+})();
+
 console.log("ls:content: finish");
