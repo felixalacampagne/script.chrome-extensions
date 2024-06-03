@@ -5,9 +5,13 @@ function handlePageBody(pageBody)
     var bfound = 0;
     var lyricText = "";
     var repairs = [
+      ["data-lyricid=\".*?\">", "<div class=\"f41I7", "Google3"],
+      ["data-lyricid=\".*?\">", "<div class=\"xpdxpnd", "Google2"],
       ["Sorry about that. -->", "<!-- MxM banner -->", "AZLyrics"],
       ["<div class=\"lyrics\">", "</div>", "Genius"],
-      ["<span style=\"display:none\".*?</span>", "<div class=\"xpdxpnd", "Google"]
+      ["<span style=\"display:none\".*?</span>", "<div class=\"xpdxpnd", "Google"],
+      ["<div itemprop=\"text\">", "</div>", "oldielyrics"],
+      ["<p class=\"verse\">", "<!--WIDGET - RELATED-->", "metrolyrics"]
     ];
 
     for(let item of repairs)
@@ -56,6 +60,7 @@ function cleanText(txt)
   // Maybe it changes daily or something like that!
   txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"rGtH5c\">.*?… <\/span><\/div><\/div>/s, "");
   txt = txt.replace(/<\/span><br>/g, "\n");       // google
+  txt = txt.replace(/<\/span><br aria-hidden="true">/g, "\n");       // google
   txt = txt.replace(/<\/span><\/div>/g, "\n\n");  // google
 
 
