@@ -1,26 +1,30 @@
-
 {
-  "name": "Lyric snatcher v3",
-  "version": "1.3.7.2",
+  "name": "Lyric snatcher v2.0",
+  "version": "2.0.0.1",
   "manifest_version": 3,
-  "description": "Snatch lyrics onto the clipboard v3.2",
-  "author": "Chris",
-  "background" : {
-    "service_worker": "background.js"  },
+  "description": "Snatch lyrics onto the clipboard",
+  "icons": {
+    "48": "rednote.png"
+  },  
+
+  
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": [
+        "https://*/*"
+      ]
+    }
+  ],
+    
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "rednote.png"
+    "default_icon": "rednote.png",
+    "default_popup": "popup.html"
   },
 
   "permissions": [
-  "scripting", 
-  "activeTab",
-  "clipboardWrite", 
-  "declarativeContent"
-  ],
-"host_permissions": [
-  "http://*/" ,
-  "https://*/"
-]
-
+      "scripting", 
+      "activeTab", 
+      "clipboardWrite"
+  ]
 }
