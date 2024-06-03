@@ -1,13 +1,16 @@
 {
   "name": "Lyric snatcher v2.0",
-  "version": "2.0.0.1",
+  "version": "2.0.0.2",
   "manifest_version": 3,
   "description": "Snatch lyrics onto the clipboard",
   "icons": {
     "48": "rednote.png"
   },  
 
-  
+  "background": {
+    "service_worker": "background.js"
+  },
+    
   "content_scripts": [
     {
       "js": ["content.js"],
@@ -19,7 +22,8 @@
     
   "action": {
     "default_icon": "rednote.png",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "Lyric snatcher"
   },
 
   "permissions": [
