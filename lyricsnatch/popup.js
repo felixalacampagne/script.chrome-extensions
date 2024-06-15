@@ -1,35 +1,29 @@
-// 02 Jun 2019 class name of Google expand duplicate text changed
-// 24 Apr 2019 Added new criteria for Google. Dump page to clipboard when no lyric found.
-// 26 May 2024 Transferred third value for Google from broken 1.3.5 code, looks like it should still work
-chrome.runtime.onMessage.addListener(function(request, sender) {
-  // manifest.json references popup.html
-  // popup.html references popup.js
-  // this is sdded as an action (aka message) listener.
-  // popup.js::onWindowLoad() references getPagesSource.js.
-  // The action "getSource" is registered by getPagesSource.js. 
-  // getPageSource.js sends the "getSource" action, presumably when the icon is clicked, and it arrives here.
-  // NB getPageSource.js also adds URL filters so the icon is only enabled for supported websites.
-  if (request.action == "getSource")
-  {
+var gPostsnatchgoto="";
+
+function handlePageBody(pageBody)
+{
     // This is where the source of the page arrives for display in the popup
     // so this is probably where the processing should occur!
     var bfound = 0;
-    var pageBody = request.source;
+    var lyricText = "";
     var repairs = [
       ["data-lyricid=\".*?\">", "<div class=\"f41I7", "Google3"],
       ["data-lyricid=\".*?\">", "<div class=\"xpdxpnd", "Google2"],
       ["Sorry about that. -->", "<!-- MxM banner -->", "AZLyrics"],
       ["<div class=\"lyrics\">", "</div>", "Genius"],
+      ["<div data-lyrics-container=\"true\" class=\"Lyrics_.*?>","<div class=\"LyricsFooter__", "Genius2"],
       ["<span style=\"display:none\".*?</span>", "<div class=\"xpdxpnd", "Google"],
       ["<div itemprop=\"text\">", "</div>", "oldielyrics"],
       ["<p class=\"verse\">", "<!--WIDGET - RELATED-->", "metrolyrics"]
     ];
-
+    gPostsnatchgoto="";
     for(let item of repairs)
     {
-      if(snatchLyric(item[0], item[1], pageBody) != 0)
+      lyricText = snatchLyric(item[0], item[1], pageBody);
+      if(lyricText.length > 0)
       {
-        message.innerText = "Found lyric using '" + item[2] + "' search patterns.";
+        setMessage("Found lyric using '" + item[2] + "' search patterns.");
+        gPostsnatchgoto=item[2];  // content.js needs to decide what to do based on the search pattern id
         bfound = 1;
         break;
       }
@@ -37,27 +31,26 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
     if(bfound == 0)
     {
-      message.innerText = "Did not find any lyrics on this page.";
-      writeToClipboard(pageBody);
+      setMessage("Did not find any lyrics on this page.");
+      lyricText = pageBody;
     }
-  }
-});
+    
+    return lyricText;
+}
 
 function snatchLyric(sre, ere, content)
 {
 var fulre = new RegExp(sre + "(.*?)" + ere, "s");
 var bfound = 0;
 var matcharr = content.match(fulre);
-
+var extract = "";
   if(matcharr != null)
   {
-    var extract = matcharr[1];
+    extract = matcharr[1];
     extract = cleanText(extract);
-    writeToClipboard(extract);
-    bfound = 1;
   }
 
-  return bfound;
+  return extract;
 }
 
 
@@ -69,73 +62,173 @@ function cleanText(txt)
   // The random looking names suggest that they might be different for every
   // search however it seemed to work consistently for the multiple searches I tried.
   // Maybe it changes daily or something like that!
-  // Indeed the class name changed...
-   // <div jsname="U8S5sf" class="ujudUb WRZytc OULBYb">
-  txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"[A-Za-z0-9]{6,6} [A-Za-z0-9]{6,6} [A-Za-z0-9]{6,6}\">.*?� <\/span><\/div><\/div>/s, "");
-  //txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"rGtH5c\">.*?� <\/span><\/div><\/div>/s, "");
+  // NB the 's' flag, aka 'dotAll', means '.' matches newlines
+  // x(?=y) matches x only if followed by y. y is not part of the match
+  txt =txt.replace(/<div class=\"RightSidebar__Container.*?<\/div><\/div><\/div>(?=<div data-lyrics-container)/sg, ""); // genius
+  txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"rGtH5c\">.*?… <\/span><\/div><\/div>/s, "");
   txt = txt.replace(/<\/span><br>/g, "\n");       // google
   txt = txt.replace(/<\/span><br aria-hidden="true">/g, "\n");       // google
   txt = txt.replace(/<\/span><\/div>/g, "\n\n");  // google
 
-
   // Sometimes the p and br have a line terminator after and sometimes they don't
   // optionally including the terminator in the pattern, and inserting a new terminator
   // allows for both cases
-  // Metrolyrics uses a p to seperate verses, hence the double line feed
-  // maybe means I need to replace quadruple empty lines with double line feeds
-  txt = txt.replace(/<p.*?>\n{0,1}/g, "\n\n");
+  txt = txt.replace(/<p>\n{0,1}/g, "\n");
   txt = txt.replace(/<br>\n{0,1}/g, "\n");
   txt = txt.replace(/<.*?>/sgm, "");
   txt = txt.replace(/   */sgm, "");
 
-//   $lyric =~ s/’/'/g;
-//   $lyric =~ s/‘/'/g;
-//   $lyric =~ s/“/"/g;
-//   $lyric =~ s/”/"/g;
-   txt = txt.replace(/�/g,"'");
-   txt = txt.replace(/Source:&nbsp;.*$/, ""); // Google
-   // txt = txt.replace(//g,""); appears as a square in the web page, and ... in UE. Replace doesn't work.
-   
+//   $lyric =~ s/â€™/'/g;
+//   $lyric =~ s/â€˜/'/g;
+//   $lyric =~ s/â€œ/"/g;
+//   $lyric =~ s/â€/"/g;
   return txt;
 }
 
 
-function writeToClipboard(clipText)
+// Seems to be a hundered and one ways to deal with the 'Promise' that
+// writeText returns. Obviously I just want to write the text and return
+// like it used to do with the v2 manifest
+async function writeToClipboard(clipText)
 {
+   let mycliptext = clipText;
+   console.log("popup:AwriteToClipboard: start");   
+   try
+   {
+      const result = await navigator.clipboard.writeText(mycliptext);
+      console.log("popup:AwriteToClipboard: write successful");
+   }
+   catch(error)
+   {
+      // setMessage("Clipboard write failed!!\n" + error);
+      console.log("popup:AwriteToClipboard: write failed: " + error);
+   }
+   console.log("popup:AwriteToClipboard: finish"); 
+}
+
+async function canWriteToClipboard()
+{
+let canit = false;
+   console.log("popup:canWriteToClipboard: start");
+   try
+   {
+      const result = await navigator.permissions.query({name: "clipboard-write"})
+      canit = (result.state == "granted" || result.state == "prompt");
+   }
+   catch(error)
+   {
+       console.log("popup:canWriteToClipboard: clipboard-write not supported: " + error);   
+       canit = true;
+   }
+   console.log("popup:canWriteToClipboard: finish: " + canit);
+   return canit;
+}
+
+function writeToClipboardOld(clipText)
+{
+   console.log("popup:writeToClipboard: start");
     // try to put something on the clipboard... this is based on
     // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Interact_with_the_clipboard
     // Wow!! It worked!
-  navigator.permissions.query({name: "clipboard-write"}).then(
-    result => {
-      if (result.state == "granted" || result.state == "prompt") {
-        navigator.clipboard.writeText(clipText).then(
-          function()
-          {/* success function */
-          },
-          function()
-          {/* failure function */
-            message.innerText = clipText + "\nClipboard write failed!!";
-          });
+   navigator.permissions.query({name: "clipboard-write"})
+   .then(result => 
+   {
+      if (result.state == "granted" || result.state == "prompt") 
+      {
+         navigator.clipboard.writeText(clipText)
+         .then(() => 
+         {
+            console.log("popup:writeToClipboard: write successful");
+         })
+         .catch(() =>
+         {/* failure function */
+            setMessage("Clipboard write failed!!\n" + clipText);
+            console.log("popup:writeToClipboard: write failed!");
+         });
       }
-    });
+      else
+      {
+         console.log("popup:writeToClipboard: No permission to write to clipboard!: " + result.state);
+         setMessage("No permission to write to clipboard!");
+      }
+   });
+   console.log("popup:writeToClipboard: finish");
 }
 
-function onWindowLoad()
+function setMessage(msgText)
 {
-
-  var message = document.querySelector('#message');
-
-  chrome.tabs.executeScript(null,
-  {
-    file: "getPagesSource.js"
-  },
-  function() {
-    // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-    if (chrome.runtime.lastError) {
-      message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
-    }
-  });
-
+   var messagediv = document.querySelector('#message');
+   if(messagediv) 
+   {
+      messagediv.innerText = msgText;
+   }
+   else
+   {
+      console.log("popup:setMessage: messge div is null: message=" + msgText);
+   }
 }
 
-window.onload = onWindowLoad;
+function doProcessPage()
+{
+console.log("popup:doProcessPage: start");
+(async () => {
+   var tabid = 1;
+   try
+   {
+      // This fails to determine a tab.id when the browser is initially loaded and a lyric search
+   	  // performed. Haven't a clue what I can do about that... Also the lyric badge
+   	  // is not updated so it looks like the extension is not injected properly by the browser (Opera)
+	    const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+	   
+	    if(tab)
+	    {
+	   	   tabid = tab.id;
+	    }
+	    const response = await chrome.tabs.sendMessage(tabid, {action: "getSource"});
+	   
+	    if(response)
+	    {
+	       const result = await canWriteToClipboard();
+	       if(result)
+	       {
+	          var lyricText = handlePageBody(response.source);
+	          console.log("popup:doProcessPage: write lyric to clipboard:\n" + lyricText);
+	          await writeToClipboard(lyricText);
+	          console.log("popup:doProcessPage: lyric written to clipboard");
+	          
+	          if(gPostsnatchgoto !== "")
+	          {
+	            console.log("popup:doProcessPage: sending gotoLocation message with: " + gPostsnatchgoto);
+	            chrome.tabs.sendMessage(tabid, {action: "gotoLocation", location: gPostsnatchgoto});
+	          }
+	       }
+	       else
+	       {
+	          console.log("popup:doProcessPage: no permission to write to clipboard");
+	          setMessage("permission denied for clipboard write");
+	       }
+	    }  
+	    else
+	    {
+	       setMessage("empty response for sendMessage");
+	    }
+	 }
+	 catch(error)
+	 {
+	    console.log("popup:doProcessPage: error fetching page source from tab " + tabid + ": " + error);
+	    setMessage("error fetching page source from tab " + tabid + ": " + error);
+	    //setMessage("no access to page source");
+	 }
+})();
+console.log("popup:doProcessPage: finish");
+}
+
+// Keep getting NotAllowedError: Document is not focused. error when running
+// from onload. Doesn't seem to happen to often when running from onfocus
+// but instead sometimes it just doesn't do anything until the popup is 
+// is clicked.
+// But at least sometimes it works - I guess going from something which
+// reliably worked everytime to something which only works occasionally is
+// about as good as continuous improvement gets nowadays.
+//window.onload = doProcessPage;
+window.onfocus = doProcessPage;
