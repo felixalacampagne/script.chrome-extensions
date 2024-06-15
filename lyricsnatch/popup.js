@@ -1,3 +1,5 @@
+var gPostsnatchgoto="";
+
 function handlePageBody(pageBody)
 {
     // This is where the source of the page arrives for display in the popup
@@ -14,13 +16,14 @@ function handlePageBody(pageBody)
       ["<div itemprop=\"text\">", "</div>", "oldielyrics"],
       ["<p class=\"verse\">", "<!--WIDGET - RELATED-->", "metrolyrics"]
     ];
-
+    gPostsnatchgoto="";
     for(let item of repairs)
     {
       lyricText = snatchLyric(item[0], item[1], pageBody);
       if(lyricText.length > 0)
       {
         setMessage("Found lyric using '" + item[2] + "' search patterns.");
+        gPostsnatchgoto=item[2];  // content.js needs to decide what to do based on the search pattern id
         bfound = 1;
         break;
       }
@@ -190,6 +193,12 @@ console.log("popup:doProcessPage: start");
 	          console.log("popup:doProcessPage: write lyric to clipboard:\n" + lyricText);
 	          await writeToClipboard(lyricText);
 	          console.log("popup:doProcessPage: lyric written to clipboard");
+	          
+	          if(gPostsnatchgoto !== "")
+	          {
+	            console.log("popup:doProcessPage: sending gotoLocation message with: " + gPostsnatchgoto);
+	            chrome.tabs.sendMessage(tabid, {action: "gotoLocation", location: gPostsnatchgoto});
+	          }
 	       }
 	       else
 	       {
