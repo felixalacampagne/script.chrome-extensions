@@ -23,6 +23,12 @@ chrome.runtime.onMessage.addListener(function(request,sender, sendResponse)
          {
             document.getElementsByClassName('album-image')[0].scrollIntoView({behavior: "smooth"});
          }
+         else if (loc == "Genius2" )
+         {
+            // document.getElementsByClassName('AlbumTracklist__Container-sc-123giuo-0')[0].scrollIntoView({behavior: "smooth"});
+            document.getElementsByClassName('PrimaryAlbum__AlbumDetails-cuci8p-3')[0].scrollIntoView({behavior: "smooth"});
+            
+         }
       }
    });
 

@@ -62,11 +62,13 @@ function cleanText(txt)
   // The random looking names suggest that they might be different for every
   // search however it seemed to work consistently for the multiple searches I tried.
   // Maybe it changes daily or something like that!
+  // NB the 's' flag, aka 'dotAll', means '.' matches newlines
+  // x(?=y) matches x only if followed by y. y is not part of the match
+  txt =txt.replace(/<div class=\"RightSidebar__Container.*?<\/div><\/div><\/div>(?=<div data-lyrics-container)/sg, ""); // genius
   txt = txt.replace(/<div jsname=\"U8S5sf\" class=\"rGtH5c\">.*?… <\/span><\/div><\/div>/s, "");
   txt = txt.replace(/<\/span><br>/g, "\n");       // google
   txt = txt.replace(/<\/span><br aria-hidden="true">/g, "\n");       // google
   txt = txt.replace(/<\/span><\/div>/g, "\n\n");  // google
-
 
   // Sometimes the p and br have a line terminator after and sometimes they don't
   // optionally including the terminator in the pattern, and inserting a new terminator
