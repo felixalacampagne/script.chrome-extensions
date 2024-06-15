@@ -167,38 +167,47 @@ function doProcessPage()
 {
 console.log("popup:doProcessPage: start");
 (async () => {
+   var tabid = 1;
    try
    {
-   const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
-   const response = await chrome.tabs.sendMessage(tab.id, {action: "getSource"});
-   
-   if(response)
-   {
-      const result = await canWriteToClipboard();
-      if(result)
-      {
-         var lyricText = handlePageBody(response.source);
-         console.log("popup:doProcessPage: write lyric to clipboard:\n" + lyricText);
-         await writeToClipboard(lyricText);
-         console.log("popup:doProcessPage: lyric written to clipboard");
-      }
-      else
-      {
-         console.log("popup:doProcessPage: no permission to write to clipboard");
-         setMessage("permission denied for clipboard write");
-      }
-   }  
-   else
-   {
-      setMessage("empty response for sendMessage");
-   }
-}
-catch(error)
-{
-   console.log("popup:doProcessPage: error fetching page source");
-   setMessage("no access to page source");
-}
-
+      // This fails to determine a tab.id when the browser is initially loaded and a lyric search
+   	  // performed. Haven't a clue what I can do about that... Also the lyric badge
+   	  // is not updated so it looks like the extension is not injected properly by the browser (Opera)
+	    const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+	   
+	    if(tab)
+	    {
+	   	   tabid = tab.id;
+	    }
+	    const response = await chrome.tabs.sendMessage(tabid, {action: "getSource"});
+	   
+	    if(response)
+	    {
+	       const result = await canWriteToClipboard();
+	       if(result)
+	       {
+	          var lyricText = handlePageBody(response.source);
+	          console.log("popup:doProcessPage: write lyric to clipboard:\n" + lyricText);
+	          await writeToClipboard(lyricText);
+	          console.log("popup:doProcessPage: lyric written to clipboard");
+	       }
+	       else
+	       {
+	          console.log("popup:doProcessPage: no permission to write to clipboard");
+	          setMessage("permission denied for clipboard write");
+	       }
+	    }  
+	    else
+	    {
+	       setMessage("empty response for sendMessage");
+	    }
+	 }
+	 catch(error)
+	 {
+	    console.log("popup:doProcessPage: error fetching page source from tab " + tabid + ": " + error);
+	    setMessage("error fetching page source from tab " + tabid + ": " + error);
+	    //setMessage("no access to page source");
+	 }
 })();
 console.log("popup:doProcessPage: finish");
 }
